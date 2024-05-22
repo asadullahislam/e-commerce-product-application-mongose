@@ -1,11 +1,17 @@
 import { Request, Response } from "express";
-import productService from "./product.service";
+
 import { ProductModel } from "./product.model";
+import { ProductServices } from "./product.service";
+import ProductValidationSchema from "./product.validation.zod";
 
 const createProduct = async (req: Request, res: Response) => {
   try {
     const product = req.body;
-    const result = await productService.createProductIntoDB(product);
+
+    const zodParsedProductData = ProductValidationSchema.parse(product);
+    const result = await ProductServices.createProductIntoDB(
+      zodParsedProductData
+    );
 
     res.status(200).json({
       success: true,
@@ -23,8 +29,7 @@ const createProduct = async (req: Request, res: Response) => {
 
 const getAllProduct = async (req: Request, res: Response) => {
   try {
-    //   const product = req.body;
-    const result = await productService.getAllProductFromDB();
+    const result = await ProductServices.getAllProductFromDB();
 
     res.status(200).json({
       success: true,
@@ -43,7 +48,7 @@ const getAllProduct = async (req: Request, res: Response) => {
 const getSingleProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    const result = await productService.getSingleProductFromDB(productId);
+    const result = await ProductServices.getSingleProductFromDB(productId);
 
     res.status(200).json({
       success: true,
@@ -58,6 +63,7 @@ const getSingleProduct = async (req: Request, res: Response) => {
     });
   }
 };
+//update document
 const updateSingleProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
@@ -88,15 +94,16 @@ const updateSingleProduct = async (req: Request, res: Response) => {
   }
 };
 
+//delete document
 const deleteOneProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
-    const result = await productService.deleteProduct(productId);
+    const result = await ProductServices.deleteProduct(productId);
 
     res.status(200).json({
       success: true,
       message: "Product deleted successfully!",
-      data: null,
+      data: result,
     });
   } catch (error) {
     res.status(500).json({
@@ -106,6 +113,32 @@ const deleteOneProduct = async (req: Request, res: Response) => {
     });
   }
 };
+
+// const searchProduct = async (req: Request, res: Response) => {
+//   try {
+//     const { searchItem } = req.query;
+//     if (searchItem || typeof searchItem !== "string") {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid or missing search term",
+//       });
+//     }
+
+//     const result = await productService.deleteProduct(productId);
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Product deleted successfully!",
+//       data: null,
+//     });
+//   } catch (error) {
+//     res.status(500).json({
+//       success: false,
+//       message: "Product delete is notsuccessfully",
+//       error: error,
+//     });
+//   }
+// };
 
 export const ProductControllers = {
   createProduct,

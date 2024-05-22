@@ -10,24 +10,17 @@ const getAllProductFromDB = async () => {
   const result = await ProductModel.find();
   return result;
 };
-
 const getSingleProductFromDB = async (_id: string) => {
   const result = await ProductModel.findById({ _id });
   return result;
 };
-
-//its not working , why not working ???
-// const updateSingleProductFromDB = async (productId, updateData, z) => {
-//   const result = await ProductModel.findOneAndUpdate(productId, updateData, z);
-//   return result;
-// };
 
 const deleteProduct = async (_id: string) => {
   const result = await ProductModel.findByIdAndDelete({ _id });
   return result;
 };
 
-export default {
+export const ProductServices = {
   createProductIntoDB,
   getAllProductFromDB,
   getSingleProductFromDB,
