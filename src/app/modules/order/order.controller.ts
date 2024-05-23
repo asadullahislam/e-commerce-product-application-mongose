@@ -2,16 +2,14 @@ import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
 import OrderValidationSchema from "./order.validation";
 
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
+
     const result = await OrderServices.createOrderIntoDB(orderData);
     res.status(200).json({
+      success: true,
+      message: "Order created successfully!",
       data: result,
     });
   } catch (error) {

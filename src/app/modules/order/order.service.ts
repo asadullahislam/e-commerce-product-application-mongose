@@ -21,6 +21,7 @@ const createOrderIntoDB = async (orderData: OrderItem) => {
   //update inventory
 
   product.inventory.inStock = product.inventory.quantity > 0; //update isStock
+
   await product.save();
   const newOrder = await OrderModel.create({
     email,
@@ -28,11 +29,11 @@ const createOrderIntoDB = async (orderData: OrderItem) => {
     price,
     quantity,
   });
-  return {
-    success: true,
-    message: "Order created successfully!",
-    data: newOrder,
-  };
+  // return {
+  //   success: true,
+  //   message: "Order created successfully!",
+  //   data: newOrder,
+  // };
 };
 
 const getAllOrderFromDB = async () => {
