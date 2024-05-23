@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+const url = require("url");
 
 import { ProductModel } from "./product.model";
 import { ProductServices } from "./product.service";
@@ -29,19 +30,41 @@ const createProduct = async (req: Request, res: Response) => {
 
 const getAllProduct = async (req: Request, res: Response) => {
   try {
-    const result = await ProductServices.getAllProductFromDB();
+    const searchTerm = req.query.searchTerm as string;
 
-    res.status(200).json({
-      success: true,
-      message: "Products fetched successfully!",
-      data: result,
-    });
+    // const queryProducts = await ProductServices.queryProductByName(searchTerm);
+    // console.log(queryProducts);
+
+    if (searchTerm) {
+      const queryProducts = await ProductServices.queryProductByName(
+        searchTerm
+      );
+      if (queryProducts.length === 0) {
+        res.status(404).json({
+          success: false,
+          message: `No products found matching search term ${searchTerm} `,
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: `Products matching search term '${searchTerm}' fetched successfully!`,
+        data: queryProducts,
+      });
+    } else {
+      const result = await ProductServices.getAllProductFromDB();
+      res.status(200).json({
+        success: true,
+        message: `All porduct fetched successfully!`,
+        data: result,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Product is not fatched successfully",
       error: error,
     });
+    console.log(error);
   }
 };
 

@@ -20,9 +20,15 @@ const deleteProduct = async (_id: string) => {
   return result;
 };
 
+const queryProductByName = async (searchTerm: string) => {
+  const regex = new RegExp(searchTerm, "i");
+  const result = ProductModel.find({ name: regex });
+  return result;
+};
 export const ProductServices = {
   createProductIntoDB,
   getAllProductFromDB,
   getSingleProductFromDB,
   deleteProduct,
+  queryProductByName,
 };
