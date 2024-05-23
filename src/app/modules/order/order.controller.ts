@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { OrderServices } from "./order.service";
 import OrderValidationSchema from "./order.validation";
-import { ZodError } from "zod";
 
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {

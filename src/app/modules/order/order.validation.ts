@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import { z } from "zod";
-
 // Define the Zod schema
 const OrderValidationSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),

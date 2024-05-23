@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ProductServices = void 0;
 const product_model_1 = require("./product.model");
 const createProductIntoDB = (product) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield product_model_1.ProductModel.create(product);
@@ -22,13 +23,19 @@ const getSingleProductFromDB = (_id) => __awaiter(void 0, void 0, void 0, functi
     const result = yield product_model_1.ProductModel.findById({ _id });
     return result;
 });
-const updateSingleProductFromDB = (_id) => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield product_model_1.ProductModel.updateOne({ _id });
+const deleteProduct = (_id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield product_model_1.ProductModel.findByIdAndDelete({ _id });
     return result;
 });
-exports.default = {
+const queryProductByName = (searchTerm) => __awaiter(void 0, void 0, void 0, function* () {
+    const regex = new RegExp(searchTerm, "i");
+    const result = product_model_1.ProductModel.find({ name: regex });
+    return result;
+});
+exports.ProductServices = {
     createProductIntoDB,
     getAllProductFromDB,
     getSingleProductFromDB,
-    updateSingleProductFromDB,
+    deleteProduct,
+    queryProductByName,
 };
