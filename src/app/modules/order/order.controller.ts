@@ -9,20 +9,26 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
 
     const result = await OrderServices.createOrderIntoDB(zodParsedOrderData);
 
-    res.status(200).json({
-      success: true,
-      message: "Order created successfully!",
-      data: result,
-    });
+    if (result.success) {
+      res.status(200).json({
+        success: true,
+        message: "Order created successfully!",
+        data: result.data,
+      });
+    } else {
+      res.status(400).json({
+        success: false,
+        message: result.message,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Order not found",
+      message: "Internal server error",
       error: error,
     });
   }
 };
-
 const getAllOrder = async (req: Request, res: Response) => {
   try {
     const email = req.query.email as string;

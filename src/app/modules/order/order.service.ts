@@ -5,34 +5,40 @@ import { OrderModel } from "./order.model";
 const createOrderIntoDB = async (orderData: OrderItem) => {
   const { email, productId, price, quantity } = orderData;
 
-  const product = await ProductModel.findById(productId);
+  try {
+    const product = await ProductModel.findById(productId);
 
-  if (!product) {
-    return { success: false, message: "Product not found" };
-  }
+    if (!product) {
+      return { success: false, message: "Product not found" };
+    }
 
-  // check is sufficient quantity is available
+    // Check if sufficient quantity is available
+    if (product.inventory.quantity < quantity) {
+      return {
+        success: false,
+        message: "Insufficient quantity available in inventory",
+      };
+    }
 
-  if (product.inventory.quantity < quantity) {
+    // Update inventory
+    product.inventory.quantity -= quantity;
+    product.inventory.inStock = product.inventory.quantity > 0; // Update inStock
+    await product.save();
+
+    const newOrder = await OrderModel.create({
+      email,
+      productId,
+      price,
+      quantity,
+    });
+
+    return { success: true, data: newOrder };
+  } catch (error) {
     return {
       success: false,
-      message: "Insufficient quantity available in inventory",
+      message: "Database error",
     };
   }
-
-  //update inventory
-  product.inventory.quantity -= quantity;
-
-  product.inventory.inStock = product.inventory.quantity > 0; //update isStock
-
-  await product.save();
-  const newOrder = await OrderModel.create({
-    email,
-    productId,
-    price,
-    quantity,
-  });
-  return newOrder;
 };
 
 const getAllOrderFromDB = async () => {
