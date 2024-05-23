@@ -1,13 +1,12 @@
-import mongoose from "mongoose";
 import { ProductModel } from "../product/product.model";
 import { OrderItem } from "./order.interface";
 import { OrderModel } from "./order.model";
-import { Session } from "inspector";
 
 const createOrderIntoDB = async (orderData: OrderItem) => {
   const { email, productId, price, quantity } = orderData;
 
   const product = await ProductModel.findById(productId);
+
   if (!product) {
     return { success: false, message: "Product not found" };
   }

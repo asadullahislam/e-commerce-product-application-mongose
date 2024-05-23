@@ -40,17 +40,18 @@ const getAllProduct = async (req: Request, res: Response) => {
           success: false,
           message: `No products found matching search term ${searchTerm} `,
         });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: `Products matching search term '${searchTerm}' fetched successfully!`,
+          data: queryProducts,
+        });
       }
-      res.status(200).json({
-        success: true,
-        message: `Products matching search term '${searchTerm}' fetched successfully!`,
-        data: queryProducts,
-      });
     } else {
       const result = await ProductServices.getAllProductFromDB();
       res.status(200).json({
         success: true,
-        message: `All porduct fetched successfully!`,
+        message: `porducts fetched successfully!`,
         data: result,
       });
     }
@@ -60,7 +61,6 @@ const getAllProduct = async (req: Request, res: Response) => {
       message: "Product is not fatched successfully",
       error: error,
     });
-    console.log(error);
   }
 };
 
@@ -124,12 +124,12 @@ const deleteOneProduct = async (req: Request, res: Response) => {
     res.status(200).json({
       success: true,
       message: "Product deleted successfully!",
-      data: result,
+      data: null,
     });
   } catch (error) {
     res.status(500).json({
       success: false,
-      message: "Product delete is notsuccessfully",
+      message: "Product delete is not successfully",
       error: error,
     });
   }
