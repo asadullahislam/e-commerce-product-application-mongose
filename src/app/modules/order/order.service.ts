@@ -36,7 +36,7 @@ const createOrderIntoDB = async (orderData: OrderItem) => {
   } catch (error) {
     return {
       success: false,
-      message: "Database error",
+      message: "Order not found",
     };
   }
 };
