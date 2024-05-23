@@ -5,8 +5,9 @@ import OrderValidationSchema from "./order.validation";
 const createOrder = async (req: Request, res: Response): Promise<void> => {
   try {
     const orderData = req.body;
+    const zodParsedOrderData = OrderValidationSchema.parse(orderData);
 
-    const result = await OrderServices.createOrderIntoDB(orderData);
+    const result = await OrderServices.createOrderIntoDB(zodParsedOrderData);
     res.status(200).json({
       success: true,
       message: "Order created successfully!",
@@ -20,36 +21,38 @@ const createOrder = async (req: Request, res: Response): Promise<void> => {
     });
   }
 };
-const FetchOrders = async (req: Request, res: Response) => {
-  try {
-    const email = req.body.email as string;
 
+const getAllOrder = async (req: Request, res: Response) => {
+  try {
+    const email = req.query.email as string;
+
+    console.log(email);
     if (email) {
-      if (!isValidEmail) {
-        res.status(400).json({
+      const queryOrder = await OrderServices.getOrdersByEmail(email);
+
+      if (queryOrder.length == 0) {
+        res.status(404).json({
           success: false,
-          message: "Invalid email format",
+          message: `No orders found for this email:${email} address.`,
         });
-        return;
       }
-      const userOrders = await OrderServices.getOrdersByEmail(email);
-      res.json({
+      res.status(200).json({
         success: true,
-        message: `Orders fetched successfully for user email: ${email}`,
-        data: userOrders,
+        message: "Orders fetched successfully for user email!",
+        data: queryOrder,
       });
     } else {
-      const allorders = await OrderServices.getAllOrderFromDB();
+      const result = await OrderServices.getAllOrderFromDB();
       res.status(200).json({
         success: true,
         message: "Orders fetched successfully!",
-        data: allorders,
+        data: result,
       });
     }
   } catch (error) {
-    res.status(404).json({
+    res.status(500).json({
       success: false,
-      message: "An error occurred while fetching orders",
+      message: "Orders is not fetched successfully!",
       error: error,
     });
   }
@@ -57,5 +60,5 @@ const FetchOrders = async (req: Request, res: Response) => {
 
 export const OrderControllers = {
   createOrder,
-  FetchOrders,
+  getAllOrder,
 };

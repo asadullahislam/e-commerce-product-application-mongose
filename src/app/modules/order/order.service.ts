@@ -15,10 +15,14 @@ const createOrderIntoDB = async (orderData: OrderItem) => {
   // check is sufficient quantity is available
 
   if (product.inventory.quantity < quantity) {
-    return { success: false, message: "Insufficient stock" };
+    return {
+      success: false,
+      message: "Insufficient quantity available in inventory",
+    };
   }
 
   //update inventory
+  product.inventory.quantity -= quantity;
 
   product.inventory.inStock = product.inventory.quantity > 0; //update isStock
 
@@ -29,11 +33,7 @@ const createOrderIntoDB = async (orderData: OrderItem) => {
     price,
     quantity,
   });
-  // return {
-  //   success: true,
-  //   message: "Order created successfully!",
-  //   data: newOrder,
-  // };
+  return newOrder;
 };
 
 const getAllOrderFromDB = async () => {
@@ -41,11 +41,8 @@ const getAllOrderFromDB = async () => {
   return result;
 };
 const getOrdersByEmail = async (email: string) => {
-  const result = await OrderModel.find({ email });
-  if (result.length == 0) {
-    throw new Error(`No orders found for email:${email}`);
-  }
-  return result;
+  const orders = await OrderModel.find({ email });
+  return orders;
 };
 
 export const OrderServices = {

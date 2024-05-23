@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-const url = require("url");
 
 import { ProductModel } from "./product.model";
 import { ProductServices } from "./product.service";
@@ -31,9 +30,6 @@ const createProduct = async (req: Request, res: Response) => {
 const getAllProduct = async (req: Request, res: Response) => {
   try {
     const searchTerm = req.query.searchTerm as string;
-
-    // const queryProducts = await ProductServices.queryProductByName(searchTerm);
-    // console.log(queryProducts);
 
     if (searchTerm) {
       const queryProducts = await ProductServices.queryProductByName(
@@ -91,9 +87,11 @@ const updateSingleProduct = async (req: Request, res: Response) => {
   try {
     const { productId } = req.params;
     const updateData = req.body;
+    const zodParsedUpdateData = ProductValidationSchema.parse(updateData);
+
     const updateProduct = await ProductModel.findByIdAndUpdate(
       productId,
-      updateData,
+      zodParsedUpdateData,
       { new: true }
     );
 
